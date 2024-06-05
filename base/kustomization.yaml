@@ -1,2 +1,3 @@
 resources:
-  - deployment.yaml
+  - deployment-adservice.yaml
+  - deployment-emailservice.yaml

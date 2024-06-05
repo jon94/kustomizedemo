@@ -21,11 +21,20 @@ jobs:
       with:
         kustomize-version: '4.5.5'
 
-    - name: Build kustomization
-      run: kustomize build overlays/enhanced -o kustomized.yaml
+    - name: Build kustomization for adservice
+      run: kustomize build overlays/adservice -o kustomized.yaml
 
-    - name: Upload kustomized.yaml as an artifact
+    - name: Build kustomization for emailservice
+      run: kustomize build overlays/emailservice -o kustomized.yaml      
+
+    - name: Upload kustomized-adservice.yaml as an artifact
       uses: actions/upload-artifact@v3
       with:
-        name: kustomized.yaml
-        path: kustomized.yaml
+        name: kustomized-adservice.yaml
+        path: kustomized-adservice.yaml
+
+    - name: Upload kustomized-emailservice.yaml as an artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: kustomized-emailservice.yaml
+        path: kustomized-emailservice.yaml        
