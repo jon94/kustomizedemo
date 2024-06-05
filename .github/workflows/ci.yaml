@@ -1,0 +1,30 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  kustomize:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Kustomize
+      uses: imranismail/setup-kustomize@v1
+      with:
+        kustomize-version: '4.5.5'
+
+    - name: Build kustomization
+      run: kustomize build overlays/enhanced -o kustomized.yaml
+
+    - name: Validate kustomization
+      run: |
+        kubectl apply --dry-run=client -f kustomized.yaml
+        cat kustomized.yaml
