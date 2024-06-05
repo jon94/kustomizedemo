@@ -22,10 +22,10 @@ jobs:
         kustomize-version: '4.5.5'
 
     - name: Build kustomization for adservice
-      run: kustomize build overlays/adservice -o kustomized.yaml
+      run: kustomize build overlays/adservice -o kustomized-adservice.yaml
 
     - name: Build kustomization for emailservice
-      run: kustomize build overlays/emailservice -o kustomized.yaml      
+      run: kustomize build overlays/emailservice -o kustomized-emailservice.yaml      
 
     - name: Upload kustomized-adservice.yaml as an artifact
       uses: actions/upload-artifact@v3
