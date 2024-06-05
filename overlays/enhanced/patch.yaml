@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-otel-demo-adservice
+  namespace: otel-demo
+  labels:
+    tags.datadoghq.com/env: otel-demo
+    tags.datadoghq.com/service: adservice
+    tags.datadoghq.com/version: 1.4.0-profile
+  annotations:
+    admission.datadoghq.com/java-lib.version: v1.34.0
+spec:
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: otel-demo
+        tags.datadoghq.com/service: adservice
+        tags.datadoghq.com/version: 1.4.0-profile
+        admission.datadoghq.com/enabled: "true"
+      annotations:
+        admission.datadoghq.com/java-lib.version: v1.34.0

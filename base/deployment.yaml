@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-otel-demo-adservice
+  namespace: otel-demo
+  labels:
+    app.kubernetes.io/component: adservice
+    app.kubernetes.io/instance: my-otel-demo
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: my-otel-demo-adservice
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/version: 1.4.0-profile
+    helm.sh/chart: opentelemetry-demo-0.23.0
+    opentelemetry.io/name: my-otel-demo-adservice
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: my-otel-demo-adservice
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/component: adservice
+        app.kubernetes.io/instance: my-otel-demo
+        app.kubernetes.io/name: my-otel-demo-adservice
+        opentelemetry.io/name: my-otel-demo-adservice
+    spec:
+      containers:
+      - env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: OTEL_K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: OTEL_K8S_NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: OTEL_K8S_POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: OTEL_K8S_POD_UID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.uid
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: AD_SERVICE_PORT
+          value: "8080"
+        - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+          value: my-otel-demo-featureflagservice:50053
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(HOST_IP):4317
+        - name: OTLP_LOGS_EXPORTER
+          value: otlp
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.pod.name=$(OTEL_K8S_POD_NAME),deployment.environment=otel-demo,service.version=1.4.0-profile
+        - name: DD_TRACE_ENABLED
+          value: "true"
+        - name: DD_PROFILING_ENABLED
+          value: "true"        
+        image: ghcr.io/open-telemetry/demo:1.4.0-adservice
+        imagePullPolicy: IfNotPresent
+        name: adservice
+        ports:
+        - containerPort: 8080
+          name: service
+          protocol: TCP
+        resources:
+          limits:
+            memory: 300Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: my-otel-demo
+      serviceAccountName: my-otel-demo
+      terminationGracePeriodSeconds: 30
