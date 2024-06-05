@@ -1,5 +1,5 @@
 bases:
-  - ../../base/deployment-email.yaml
+  - ../../base
 
 patchesStrategicMerge:
   - patch.yaml

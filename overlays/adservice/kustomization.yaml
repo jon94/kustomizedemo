@@ -1,5 +1,5 @@
 bases:
-  - ../../base/deployment-adservice.yaml
+  - ../../base
 
 patchesStrategicMerge:
   - patch.yaml
