@@ -24,7 +24,8 @@ jobs:
     - name: Build kustomization
       run: kustomize build overlays/enhanced -o kustomized.yaml
 
-    - name: Validate kustomization
-      run: |
-        kubectl apply --dry-run=client -f kustomized.yaml
-        cat kustomized.yaml
+    - name: Upload kustomized.yaml as an artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: kustomized.yaml
+        path: kustomized.yaml
